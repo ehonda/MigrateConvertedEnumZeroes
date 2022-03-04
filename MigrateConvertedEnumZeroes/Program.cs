@@ -2,13 +2,22 @@
 
 return;
 
+internal enum Rating
+{
+    Bad,
+
+    Good
+}
+
 internal class Movie
 {
-    public Movie(string title) => Title = title;
-    
+    public Movie(string title, Rating rating) => (Title, Rating) = (title, rating);
+
     public int Id { get; set; }
 
     public string Title { get; set; }
+
+    public Rating Rating { get; set; }
 }
 
 internal class MoviesDbContext : DbContext
@@ -22,8 +31,10 @@ internal class MoviesDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Movie>().Property(movie => movie.Rating).HasConversion<string>();
+
         modelBuilder.Entity<Movie>().HasData(
-            new Movie("Some Cartoon") { Id = 1 },
-            new Movie("A Documentary") { Id = 2 });
+            new Movie("Some Cartoon", Rating.Good) { Id = 1 },
+            new Movie("A Documentary", Rating.Bad) { Id = 2 });
     }
 }
